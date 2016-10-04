@@ -31,7 +31,7 @@ function macro(config, source, defines, options){
 
   options.filename = options.filename ? _path.resolve('' + options.filename) : null;
 
-  function readString(source, index){
+  function readString(index){
     var opening = source[index];
     for (var i = index + 1; i < source.length; i++){
       var c = source[i];
@@ -41,34 +41,34 @@ function macro(config, source, defines, options){
     return i;
   }
 
-  function readLine(source, index){
+  function readLine(index){
     return source.indexOf('\n', index + 2);
   }
 
-  function readCommentary(source, index){
+  function readCommentary(index){
     var end = source.indexOf(multiLineCommentEnd, index + multiLineCommentStart.length);
     return end === -1 ? source.length : end + multiLineCommentEnd.length;
   }
 
-  function readJsCommentary(source, index){
+  function readJsCommentary(index){
     var end = source.indexOf('*/', index + 2);
     return end === -1 ? source.length : end + 2;
   }
 
-  function readJsBrakets(source, index){
+  function readJsBrakets(index){
     var n = 0;
     for (var i = index + 1; i < source.length; i++){
       switch (source[i]){
         case '{':
-          i = readJsBrakets(source, i);
+          i = readJsBrakets(i);
           break;
 
         case '/':
           var n = source[i + 1];
           if (n === '/'){
-            i = readLine(source, i);
+            i = readLine(i);
           } else if (n === '*'){
-            i = readJsCommentary(source, i);
+            i = readJsCommentary(i);
             continue;
           }
           break;
@@ -76,7 +76,7 @@ function macro(config, source, defines, options){
         case '\'':
         case '"':
         case '`':
-          i = readString(source, i);
+          i = readString(i);
           break;
 
         case '}':
@@ -87,12 +87,12 @@ function macro(config, source, defines, options){
     return i;
   }
 
-  function readToken(source, index){
+  function readToken(index){
     var token = null;
     for (var i = index + 1; i <= source.length; i++){
       var c = source[i];
       if (c == '{'){
-        i = readJsBrakets(source, i);
+        i = readJsBrakets(i);
       } else if (c == null || c == '\n' || singleLine && c == macroPrefix){
         token = source.substring(index, i).match(/^.(?:(if|elif|exec)[ \t]+([\s\S]+)|(else|endif))$/);
         i++;
@@ -164,7 +164,12 @@ function macro(config, source, defines, options){
     return piece.replace('\n' + tabSpaces, '\n');
   }
 
-  function readBlock(source, index){
+  function addPrev(token, start){
+    var behind = source.substring(start, token.start);
+    return token.singleLine ? behind : behind.replace(/ +$/, '');
+  }
+
+  function readBlock(index){
     var start = index;
     var result = '';
     var previousCondition = null;
@@ -173,39 +178,35 @@ function macro(config, source, defines, options){
       var c = source[i];
 
       if (stringQuotes.indexOf(c) !== -1){
-        i = readString(source, i);
+        i = readString(i);
         continue;
       } else if (c == singleLineComment[0] && 
           source.substr(i, singleLineComment.length) === singleLineComment){
-        i = readLine(source, i);
+        i = readLine(i);
       } else if (c == multiLineCommentStart[0] && 
           source.substr(i, multiLineCommentStart.length) === multiLineCommentStart){
-        i = readCommentary(source, i);
+        i = readCommentary(i);
       } else if (c == macroPrefix){
-        var token = readToken(source, i);
+        var token = readToken(i);
         // console.log('token: ' + JSON.stringify(token))
-        if (token == null) continue;
-
-        var behind = source.substring(start, i);
-        result += token.singleLine ? behind : behind.replace(/ +$/, '');
-
-        switch (token.key){
+        switch (token && token.key){
           case 'endif':
           case 'else':
           case 'elif':
-            if (index == 0) continue;
-            return {
-              result: result,
-              ended: token
-            };
+            if (index != 0){
+              result += addPrev(token, start, i);
+              return { result: result, ended: token };
+            }
             break;
 
           case 'exec':
-            result += tokenArg(token);
+            result += addPrev(token, start, i) + tokenArg(token);
             start = token.end;
             break;
 
           case 'if':
+            result += addPrev(token, start, i);
+
             var previousCondition = false;
             while (true){
               var condition;
@@ -221,7 +222,7 @@ function macro(config, source, defines, options){
                   break;
               }
 
-              var inside = readBlock(source, token.end);
+              var inside = readBlock(token.end);
               // console.log('inside: ' + JSON.stringify(inside) + ', condition: ' + condition);
 
               if (condition){
@@ -242,9 +243,6 @@ function macro(config, source, defines, options){
               }
             }
             break;
-
-          default:
-            start = i;
         }
       }
     }
@@ -253,7 +251,7 @@ function macro(config, source, defines, options){
     return { result: result, ended: null };
   }
 
-  var data = readBlock(source, 0);
+  var data = readBlock(0);
   return data.result;
 }
 

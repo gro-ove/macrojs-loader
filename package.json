@@ -13,6 +13,10 @@
   ],
   "author": "Ilja Jusupov <illvdg13@gmail.com> (https://github.com/gro-ove)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gro-ove/macrojs-loader.git"
+  },
   "dependencies": {
     "loader-utils": "^0.2.16"
   }

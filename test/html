@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+  ^if !SOMETHING_MISSING
+    <title></title>
+  ^endif
+  <!-- ^if THIS_SHOULD_BE_IGNORED^ test ^endif^ -->
+  ^if 5>3^ 5>3 (single line) ^endif^
+</head>
+<body>
+
+</body>
+</html>

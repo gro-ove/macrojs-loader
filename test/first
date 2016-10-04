@@ -1,0 +1,25 @@
+BEGIN
+#exec 15+16
+#exec {
+  return 22 + 27 + 'BIG_LETTERS' + BIG_DEFINES
+}
+#ifdef ABC
+  only if ABC
+  #ifdef !NO# NO is not def #endif#
+#else
+  not when ABC
+#endif
+#endif
+#ifdef 5>6
+  5>6
+#elif 5>4
+  5>4
+  #ifdef {
+    return Math.PI > 2
+  }# π>2! #endif#
+#elif 3>4
+  3>4
+#else
+  3<4
+#endif
+END

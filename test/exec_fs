@@ -1,0 +1,6 @@
+<something-before>
+#exec `${__dirname} [${fs.readdirSync('./').join(', ')}]`
+#exec {
+  return `${__dirname} [${fs.readdirSync('./').join(', ')}]`;
+}
+<something-after>

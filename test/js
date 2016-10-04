@@ -1,0 +1,24 @@
+/* #if 0# should be ignored #endif# */
+#if 0# should disappear #endif#
+/* #if 0# should be ignored #endif# */
+#if 1# should be visible #endif#
+/* #if 0# should be ignored #endif# */
+
+var debugMode = #if DEBUG# true #else# false #endif#
+var wasBuiltInMidnight = #if new Date().getHours() == 0# true #else# false #endif#;
+
+var wasBuiltInMidnight = #if {
+  var hours = new Date().getHours();
+  return hours == 0
+}# true #else# false #endif#;
+
+var wasBuiltAt = #exec Date.now()#;
+
+#exec {
+  return `var listOfFilesNextToJsFile = ${JSON.stringify(fs.readdirSync(__dirname))};`
+}
+
+#exec fs.readdirSync(__dirname).filter(x => /incl_.+\.js/.test(x)).map(x => {
+  var name = path.basename(x, '.js');
+  return `var ${name} = require('./${name}');`
+}).join('\n')

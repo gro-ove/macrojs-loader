@@ -1,0 +1,19 @@
+{
+  "name": "macrojs-loader",
+  "version": "0.1.0",
+  "description": "Macro preprocessor with inlineable JS for webpack",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/test.js test/first"
+  },
+  "keywords": [
+    "webpack",
+    "macro",
+    "loader"
+  ],
+  "author": "Ilja Jusupov <illvdg13@gmail.com> (https://github.com/gro-ove)",
+  "license": "MIT",
+  "dependencies": {
+    "loader-utils": "^0.2.16"
+  }
+}

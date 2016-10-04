@@ -25,22 +25,18 @@ For common conditions, use it like this:
 In webpack configuration, add this module to `preloaders` or `loaders`:
 
 ```js
-module: {
-  preLoaders: [
-    {
-      test: /\.jsx?$/,
-      loader: `macrojs-loader?defines=${path.join(__dirname, 'macros.json')}`,
-      include: path.join(__dirname, 'src')
-    }
-  ],
-  …
-}
+preLoaders: [
+  {
+    test: /\.jsx?$/,
+    loader: `macrojs-loader?defines=${path.join(__dirname, 'macros.json')}`
+  }
+]
 ```
 
 And add a configuration json file (`macros.json`):
 
 ```json
-[ 'DEBUG' ]
+[ "DEBUG" ]
 ```
 
 ### More examples
@@ -119,16 +115,12 @@ Also, you can change language-related params:
 ```
 
 ```js
-module: {
-  preLoaders: [
-    {
-      test: /\.jsx?$/,
-      loader: `macrojs-loader?defines=${path.join(__dirname, 'macros.json')}&config=${path.join(__dirname, 'macrojs-custom-html.json')}`,
-      include: path.join(__dirname, 'src')
-    }
-  ],
-  …
-}
+preLoaders: [
+  {
+    test: /\.html$/,
+    loader: `macrojs-loader?defines=${path.join(__dirname, 'macros.json')}&config=${path.join(__dirname, 'macrojs-custom-html.json')}`
+  }
+]
 ```
 
 

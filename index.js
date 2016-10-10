@@ -28,18 +28,24 @@ module.exports = function(content) {
     prefix: '#'
   };
 
-  for (var n in query){
-    if (query.hasOwnProperty(n) && n !== 'defines'){
-      params[n] == query[n];
-    }
-  }
-
   var defines = null;
   if (query.defines){
     try {
       defines = readDefines(query.defines);
     } catch(err) {
       throw new Error('Cannot read defines: ' + err);
+    }
+  }
+
+  if (!defines) defines = {};
+
+  for (var n in query){
+    if (query.hasOwnProperty(n) && n !== 'defines'){
+      if (/^d:(\w+)$/.test(n)){
+        defines[RegExp.$1] = JSON.parse(query[n]);
+      } else {
+        params[n] == query[n];
+      }
     }
   }
 

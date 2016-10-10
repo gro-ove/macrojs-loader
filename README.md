@@ -41,6 +41,15 @@ And add a configuration json file (`macros.json`):
 
 ### More examples
 
+Defines in query:
+
+```js
+/* webpack.config.js */
+var production = process.env.NODE_ENV == 'prod';
+…
+loader: `macrojs-loader?mode=css&defines=${path.join(__dirname, 'macros.json')}&d:DEBUG=${!production}`,
+```
+
 Single-line usage (optional):
 
 ```js

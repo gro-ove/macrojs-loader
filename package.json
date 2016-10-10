@@ -1,6 +1,6 @@
 {
   "name": "macrojs-loader",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Macro preprocessor with inlineable JS for webpack",
   "main": "index.js",
   "scripts": {
